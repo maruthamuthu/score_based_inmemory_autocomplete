@@ -16,17 +16,17 @@ public class Pair
         return new Pair(score, key);
     }
 
-    public int getScore()
+    int getScore()
     {
         return score;
     }
 
-    public String getKey()
+    String getKey()
     {
         return key;
     }
 
-    public String[] getParsedKeys()
+    String[] getParsedKeys()
     {
         return key.split("_");
     }

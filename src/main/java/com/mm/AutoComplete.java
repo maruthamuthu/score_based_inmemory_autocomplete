@@ -7,30 +7,45 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public class AutoComplete implements Serializable
+class AutoComplete implements Serializable
 {
+    // Generated using java serialver cmd
+    private static final long serialVersionUID = 5698155672533153469L;
+
     private HashMap<String, TreeMap<Integer, TreeSet<String>>> autoCompleteData = new HashMap<String, TreeMap<Integer, TreeSet<String>>>();
 
-    public LinkedHashSet<String> search(String key)
+    LinkedHashSet<String> search(String key)
     {
-        final LinkedHashSet<String> result = new LinkedHashSet<String>();
+        final LinkedHashSet<String> suggestedMatches = new LinkedHashSet<String>(10);
 
         TreeMap<Integer, TreeSet<String>> matchedDetails = autoCompleteData.get(key);
         if (matchedDetails != null)
         {
-            matchedDetails.forEach((k, v) -> {
-                if (v != null)
-                    result.addAll(v);
-            });
+            for (TreeSet<String> matchSets : matchedDetails.values())
+            {
+                for (String match : matchSets)
+                {
+                    if (suggestedMatches.size() >= 10)
+                    {
+                        break;
+                    }
+                    suggestedMatches.add(match);
+                }
+
+                if (suggestedMatches.size() == 10)
+                {
+                    break;
+                }
+            }
         }
-        return result;
+        return suggestedMatches;
     }
 
 
 
-    public void init(List<Pair> scorePairs)
+    void init(List<Pair> scorePairs)
     {
-        scorePairs.stream().forEach(this::storePair);
+        scorePairs.forEach(this::storePair);
     }
 
     private void storePair(Pair pair)
@@ -39,6 +54,7 @@ public class AutoComplete implements Serializable
         String[] keys = pair.getParsedKeys();
         if (keys.length > 1)
         {
+            // i starts from 1 because the the first subset group parse was done through the whole key (line 53).
             for (int i = 1; i < keys.length; i++)
             {
                 parseKey(keys[i], pair);
