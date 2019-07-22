@@ -74,7 +74,7 @@ class AutoComplete implements Serializable
 
     private void storeKey(String key, final Pair pair)
     {
-        TreeMap<Integer, TreeSet<String>> treeMap = autoCompleteData.computeIfAbsent(key, k -> new TreeMap<>());
+        TreeMap<Integer, TreeSet<String>> treeMap = autoCompleteData.computeIfAbsent(key, k -> new TreeMap<>(ScoreComparator.getScoreComparator()));
         treeMap.compute(pair.getScore(), (k, v) -> this.updateKeyList(v, pair.getKey()));
     }
 
